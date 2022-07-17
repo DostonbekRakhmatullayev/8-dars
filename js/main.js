@@ -1,63 +1,109 @@
+let elInput = document.querySelector(".js-input");
+let elForm = document.querySelector(".js-form");
+let elList = document.querySelector(".js-list");
+let elPrev= document.querySelector(".js-prev");
+let elNext = document.querySelector(".js-next");
+let elPagination = document.querySelector(".pagination");
+let elSelect = document.querySelector(".js-select");
 
-let elInput = document.querySelector(".js-input")
-let elForm = document.querySelector(".js-form")
-let elList = document.querySelector(".js-list")
+// Templatelarni chaqrib olish
+let elPaginationTemplate = document.querySelector(".pagination__template").content;
+let elTemplate = document.querySelector(".films__template").content;
+
+// Create document fragment qilish
+let filmsFragment = document.createDocumentFragment()
+
+// Inputga kiritilgan malumot fetch zapiros yuborishi
+let elInputVal = "";
+
+// Pagination ni active holati 1 dan boshlanadi 
+let activePage = 1;
 
 function reder(arr, node) {
   node.innerHTML = null 
+
+  // Fetch dagi data ni aynalib chiqish 
   arr.forEach(element => {
-    let newItem = document.createElement("li")
-    let newStrong = document.createElement("strong")
-    let newTitle = document.createElement("h3")
-    let newImg = document.createElement("img")
-    let newTime = document.createElement("time")
-    let newBox = document.createElement("div")
-
-    newItem.style.display = "flex";
-    newItem.style.flexDirection = "column";
-    newItem.style.textAlign = "center";
-    newItem.style.alignItems = "center";  
-    newItem.style.marginBottom = "30px";
-    newItem.style.borderRadius = "20px";
-    newItem.style.color = "white";
-    newImg.style.width = "250px";
-    newImg.style.borderRadius = "20px"
-    newImg.style.height = "300px";
-    newTitle.style.marginTop = "25px"
-    newTitle.style.width = "250px"
-
-    newItem.setAttribute("class", "movies__item");
-    newImg.setAttribute("class", "img");
-    newBox.setAttribute("class", "box");
-
-    newImg.src= element.Poster
-    newTitle.textContent = element.Title
-    newStrong.textContent = element.Type
-    newTime.textContent = element.Year
-
-    newItem.appendChild(newImg)
-    newItem.appendChild(newTitle)
-    newBox.appendChild(newStrong)
-    newBox.appendChild(newTime)
-    newItem.appendChild(newBox)
-    node.appendChild(newItem)
-  });
+    let  newTemplate = elTemplate.cloneNode(true);
+    newTemplate.querySelector(".img").src = element.Poster;
+    newTemplate.querySelector(".title").textContent = element.Title;
+    newTemplate.querySelector(".films__strong").textContent = element.Type;
+    newTemplate.querySelector(".films__time").textContent = element.Year;
+    
+    filmsFragment.appendChild(newTemplate)
+  })
+  node.appendChild(filmsFragment)
 }
 
+// Input ni submit bulish jarayoni
 elForm.addEventListener("submit", function (evt) {
   evt.preventDefault();
-
-  let elInputVal = elInput.value.trim()
-
-  getPosts(elInputVal)
-  elInput.value = null
+  elInputVal = elInput.value.trim()
+  getPosts()
+  elInput.value = ""
 })
 
-async function getPosts(title) {
-  let response = await fetch(`http://www.omdbapi.com/?apikey=2bf42ac4&s=${title}`)
+// Fetch ga zapiros kelishi
+async function getPosts() {
+  let response = await fetch(`http://www.omdbapi.com/?apikey=2bf42ac4&s=${elInputVal}&page=${activePage}`)
   let data = await response.json()
-  console.log(data);
+  
+  let totalPage = Math.ceil(data.totalResults / 10);
+  
+  if(activePage == 1) {
+    elPrev.setAttribute("disabled", true)
+  }else{
+    elPrev.removeAttribute("disabled",)
+  }
+  
+  if(activePage == totalPage) {
+    elNext.setAttribute("disabled", true)
+  }else{
+    elNext.removeAttribute("disabled",)
+  }
+  
+  // Select ni value olishi
+  if(elSelect.value === "movie"){
+    data.Search = data.Search.filter(e => e.Type === "movie");
+  }
+  if (elSelect.value === "series"){
+    data.Search = data.Search.filter(e => e.Type === "series");
+  }
+  if (elSelect.value === "all"){
+    data.Search = data.Search
+  }
+  
   reder(data.Search, elList)
+  elPagination.innerHTML = ""
+  
+  // Pagination ni chiqishi
+  for(let i = 1; i <= totalPage; i++) {
+    let newPaginationTemplate = elPaginationTemplate.cloneNode(true)
+    newPaginationTemplate.querySelector(".page-link").textContent = i
+    newPaginationTemplate.querySelector(".page-link").dataset.PageId = i
+    elPagination.appendChild(newPaginationTemplate)
+  }
 }
 
+elPrev.addEventListener("click", () => {
+  activePage--
+  getPosts();
+})
 
+elNext.addEventListener("click", () => {
+  activePage++
+  getPosts();
+})
+
+// Pagination ni bosilishi
+elPagination.addEventListener("click", function(evt) {
+  if(evt.target.matches(".page-link")) {
+    activePage = evt.target.dataset.PageId
+    getPosts() 
+  }
+})
+
+// Selectni ishlashi
+elSelect.addEventListener("click", function(evt) {
+  getPosts()
+})

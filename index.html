@@ -5,23 +5,73 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Document</title>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" 
+  rel="stylesheet" 
+  integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" 
+  crossorigin="anonymous">
   <link rel="stylesheet" href="./css/main.css">
 </head>
 <body class="bg-dark">
-
-    <div class="container">
-      <h1 class="text-center fw-bolder  text-white my-5">OMDB MOVIES</h1>
+  
+  <div class="container">
+    <h1 class="text-center fw-bolder  text-white my-5">OMDB MOVIES</h1>
+    <div class="d-flex justify-content-center align-items-center mb-5">
+      <!-- form-->
       <form class="js-form text-center">
+        <!-- input-->
         <input class="js-input fw-bolder movies__input" placeholder="Kinoni nomi" type="text">
         <img src="" alt="">
       </form>
-     </div>
       
-     <div class="container">
-      <ul class="js-list movies__list"></ul>
-     </div>
-
+      <div>
+        <!-- select sortlash uchun yaratildi-->
+        <select class="js-select films__select">
+          <!-- s -->
+          <option selected value="all">All</option>   
+          <!--Movie bosilganda faqat movielar chiqadi-->
+          <option value="movie">Movie</option>
+          <!--Series bosilganda faqat seris chiqadi-->
+          <option value="series">Series</option>
+        </select>
+      </div>
+    </div>
+  </div>
+  
+  <div class="container">
+    <!-- elementlar shu yerga kelib joylashadi -->
+    <ul class="js-list movies__list"></ul> 
+    
+    <!-- Pagination qilish uchun -->
+    <nav class="nav" aria-label="...">
+      <div class="page-item disabled">
+        <a class="page-link js-prev" href="#">Previous</a>
+      </div>
+      <ul class="pagination"></ul>
+      <div class="page-item">
+        <a class="page-link js-next" href="#">Next</a>
+      </div>
+    </nav>
+  </div>
+  
+  <!-- Templateni ichiga  malumotlar kelib joylashadi-->
+  <template class="films__template">
+    <li class="movies__item">
+      <img class="img" src="" alt="">
+      <h3 class="title"></h3>
+      <div class="box">
+        <strong class="films__strong"></strong>
+        <time class="films__time"></time>
+      </div>
+    </li>
+  </template>
+  
+  <!--Bir nechta  pagination chiqishi -->
+  <template class="pagination__template">
+    <li class="page-item">
+      <a class="page-link" href="#">1</a>
+    </li>
+  </template>
+  
   <script src="./js/main.js"></script>
 </body>
 </html>
