@@ -45,7 +45,7 @@ elForm.addEventListener("submit", function (evt) {
 
 // Fetch ga zapiros kelishi
 async function getPosts() {
-  let response = await fetch(`http://www.omdbapi.com/?apikey=2bf42ac4&s=${elInputVal}&page=${activePage}`)
+  let response = await fetch(`https://www.omdbapi.com/?apikey=2bf42ac4&s=${elInputVal}&page=${activePage}`)
   let data = await response.json()
   
   let totalPage = Math.ceil(data.totalResults / 10);
